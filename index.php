@@ -2,12 +2,16 @@
 
 require_once("vendor/autoload.php");
 
-$app = new \Slim\Slim();
+use \Slim\Slim;
+use \Hcode\Page;
+
+$app = new Slim();
 
 $app->config('debug', true);
 
 $app->get('/', function() {
     
+    /*
 	echo "OK";
 
 	$sql = new Hcode\DB\Sql();
@@ -17,6 +21,11 @@ $app->get('/', function() {
 	echo("<br><pre>");
 	print_r(json_encode($resultados));
 	echo("</pre><br>");
+	*/
+
+	$page = new Page();
+
+	$page->setTpl("index");
 
 });
 
