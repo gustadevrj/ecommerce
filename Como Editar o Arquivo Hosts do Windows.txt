@@ -1,0 +1,35 @@
+
+Como Editar o Arquivo Hosts do Windows e Emular a Troca do DNS
+
+https://www.hostinger.com.br/tutoriais/como-editar-arquivo-hosts-do-windows
+
+Dentro do seu sistema operacional tem um arquivo que pode ser usado para vincular um domínio a um endereço de IP, até que o domínio seja registrado e propagado mundialmente. Geralmente demora um certo tempo até o domínio registrado começar a funcionar – e pode levar de 24 até 48 horas para que a propagação do DNS seja completa sempre que o domínio é apontado para um servidor diferente. Normalmente, um site não possui um endereço de IP: e é aí que o arquivo hosts entra em cena. Se diversos sites utilizam o mesmo endereço de IP, você não vai conseguir acessar seu site pelo IP. Este tutorial ensina como editar o arquivo hosts no Windows.
+
+O Que Você Vai Precisar
+Antes de começar você vai precisar:
+
+Privilégios de Administrador em seu computador.
+O domínio e endereço de IP onde o site está hospedado (seu provedor de hospedagem pode fornecer o endereço de IP).
+
+1º Passo — Abrindo o Bloco de Notas como Administrador
+Você precisa abrir um editor de texto (recomendamos o Bloco de Notas) como Administrador. Clique no botão Iniciar do Windows, Digite Bloco de Notas > Clique com o botão direito em Executar como administrador. Se o sistema operacional solicitar, informe a senha do administrador.
+
+2º Passo — Abrir o Arquivo hosts
+Então, abra o arquivo clicando em Arquivo > Abrir…:
+
+c:\windows\system32\drivers\etc\hosts (Não esqueça de marcar “Todos os arquivos”, logo ao lado do nome do arquivo).
+
+3º Passo — Editar o Arquivo Hosts Com um Endereço de IP e Domínio
+Agora você pode editar o arquivo inserindo o seu endereço de IP compartilhado e o domínio.
+
+Neste exemplo utilizando o endereço de IP 31.220.10.10 e o domínio www.seudominio.com.br. Lembre-se de que não deve haver nenhum sinal de # no início da linha, se houver não vai funcionar.
+
+4º Passo — Salvar o Arquivo Hosts
+Não esqueça de salvar as alterações. Clique em Arquivo e então selecione Salvar.
+
+5º Passo — Acessar Seu Site 
+Agora você já deve conseguir visualizar seu site mesmo sem um domínio registrado ou propagado. Basta abrir o navegador e inserir o domínio que foi colocado no arquivo hosts e o conteúdo que se encontra no servidor do IP informado deve aparecer.
+
+Conclusão
+Vale lembrar que a alteração só vai ter efeito no computador onde o arquivo hosts foi editado. Outras pessoas não vão ter o mesmo resultado ao acessar o domínio em questão. Você também não deve esquecer de remover esta linha do arquivo hosts caso o seu domínio já esteja registrado ou propagado.
+

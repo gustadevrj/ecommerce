@@ -20,8 +20,8 @@ class Page{
 
 		// config
 		$config = array(
-			"tpl_dir"       => $_SERVER["DOCUMENT_ROOT"] . "/UDEMY/curso_004/projeto_ecommerce" . $tpl_dir,
-			"cache_dir"     => $_SERVER["DOCUMENT_ROOT"] . "/UDEMY/curso_004/projeto_ecommerce" . "/views-cache/",
+			"tpl_dir"       => $_SERVER["DOCUMENT_ROOT"] . $tpl_dir,
+			"cache_dir"     => $_SERVER["DOCUMENT_ROOT"] . "/views-cache/",
 			"debug"         => true // set to false to improve the speed
 		);
 

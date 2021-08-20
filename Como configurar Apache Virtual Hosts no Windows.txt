@@ -1,0 +1,115 @@
+
+
+Como configurar Apache Virtual Hosts no Windows
+
+https://hcode.com.br/blog/como-configurar-apache-virtual-hosts-no-windows
+
+Neste artigo iremos aprender o que são Virtual Hosts, quais são as vantagens em usá-los e como podemos criá-los em um ambiente Windows.
+
+O que é um Virtual Host?
+Um Virtual Host é, em poucas palavras, um servidor virtual. Quando usamos um Virtual Host, podemos criar uma representação de um site em nosso servidor Apache, mas continuaremos testando códigos locais. Para entendermos melhor, pense no seguinte: quando iniciamos nosso servidor Apache, sempre acessamos no navegador o localhost ou 127.0.0.1 (nosso lar doce lar). Com esse servidor local nós podemos testar e trabalhar em vários projetos. Mas, imagine que precisamos testar dois projetos ao mesmo tempo: um site de um restaurante e um site de notícias. Para fazer os testes precisaríamos acessar localhost/restaurante e localhost/noticias, por exemplo. Não seria melhor se pudéssemos já simular como esses projetos ficariam no servidor remoto? Por exemplo: acessar projeto-restaurante.com.br e projeto-noticias.com.br e testar esses dois projetos de maneira independente? É nessa situação que um Virtual Host poderia nos ajudar, pois ele cria domínios diferentes para o mesmo servidor.
+
+Vantagens de usar um Virtual Host
+Como vimos, uma das vantagens em usar Virtual Hosts é que eles nos dão a possibilidade de testar mais de um projeto ao mesmo tempo em nosso servidor local. Mas, não é apenas isso. Pense agora no Servidor Remoto. Geralmente imaginamos que um servidor pode conter apenas um site. Contudo, se aplicarmos o conceito de Virtual Hosts também em nossa hospedagem, poderemos ter mais de um projeto hospedado no mesmo servidor. Isso é incrível, pois poderemos até mesmo economizar os custos com servidores.
+
+Também poderemos testar nossos projetos de maneira mais organizada, em um ambiente mais próximo do dia a dia.
+
+Como criar um Virtual Host
+Nesse artigo iremos falar sobre criar Virtual Hosts no Windows, com a ajuda do XAMPP. A primeira coisa que precisamos fazer é identificar a localização do arquivo httpd-vhosts.conf em nosso Apache. No XAMPP, esse arquivo fica no pasta
+
+C:/xampp/apache/conf/extra/httpd-vhosts.conf.
+
+Ao acessar esse arquivo, poderemos criar nosso primeiro host virtual. A estrutura básica de um Virtual Host é a seguinte:
+
+<VirtualHost *:80>
+	ServerName www.meuprojeto.com.br
+	ServerAlias meuprojeto.com.br
+	DocumentRoot "caminho_para_o_projeto"
+</VirtualHost>
+
+Explicando: para criar um Virtual Host usamos uma estrutura parecida a de uma tag do HTML. Informamos qual porta será usada para acessar esse host. Definimos a porta 80 pois ela é a padrão para acessar sites na Web, representa o protocolo HTTP. Dentro da “tag” do Virtual Host nós definimos três configurações.
+
+1 - ServerName. Representa o nome do servidor, ou seja, o domínio que iremos usar para acessar o projeto.
+
+2 - ServerAlias. Cria um apelido para o servidor, ou seja, um nome alternativo que irá redirecionar a requisição para o domínio principal, garantindo que o usuário não tenha um erro de caminho não encontrado se informar um host diferente.
+
+3 - DocumentRoot. Define o caminho dentro de nosso computador para encontrar o projeto de fato.
+
+Essa estrutura funciona na maioria das vezes. Contudo, pode haver alguma situação em que ela não consiga ser executada. Para garantir seu funcionamento, é interessante adicionar o seguinte trecho de código à “tag” do Virtual Host:
+
+<Directory "caminho_para_o_projeto">
+	Options Indexes FollowSymLinks Includes ExecCGI
+	AllowOverride All
+	Require all granted 
+</Directory>
+
+Após qualquer alteração neste arquivo, precisamos reiniciar o servidor Apache para ver as mudanças sendo refletidas.
+
+Por último, precisamos fazer uma pequena alteração em um arquivo de configuração do nosso Sistema Operacional, o arquivo hosts. Isso é necessário pois, quando formos acessar o domínio que criamos, o nosso computador irá procurar por seu endereço na Internet e não irá encontrá-lo ou irá nos redirecionar para um site que não desejamos. Por isso, nós iremos deixar claro para o Windows que queremos que ele procure o domínio em nosso próprio servidor. O arquivo hosts tem esse objetivo. Interessante, não concorda?
+
+O arquivo hosts fica armazenado em C:/Windows/System32/drivers/etc/hosts. Esse arquivo contém o seguinte padrão: o nome do servidor a ser redirecionado e o domínio que estamos desejando redirecionar. Assim, basta adicionar essa linha:
+
+127.0.0.1	www.meuprojeto.com.br
+
+Ao editar este arquivo e tentar salvá-lo, pode ser que o Windows não permita, devido à falta de permissão. Nesse caso, recomendamos que você use o Visual Studio Code para realizar a edição. Se não for possível utilizá-lo, você pode seguir o seguinte passo a passo: copie o arquivo hosts e cole-o em sua Área de Trabalho; edite-o normalmente e salve. Por fim, copie-o novamente e cole na pasta de origem, com o objetivo de substituí-lo. O Windows irá pedir permissão de Administrador. Basta concedê-la e então o arquivo estará salvo com as alterações.
+
+Com isso nosso host virtual estará funcionando. O que acha de colocarmos esses conceitos em prática com um exemplo prático? Vamos lá então!
+
+Exemplo Prático
+Iremos criar um projeto simples de um restaurante em uma pasta e um projeto de um site de notícias em outra. Ambas possuirão um arquivo index.php. O arquivo do projeto do restaurante ficará assim:
+
+<?php
+
+echo "<h2>Hello World! Sejam bem-vindo ao meu Projeto de Restaurante</h2>";
+
+E o arquivo do projeto de notícias ficará assim:
+
+<?php
+
+echo "<h2>Hello World! Sejam bem-vindo ao meu Projeto de Notícias</h2>";
+
+Agora vamos criar um Virtual Host para cada um desses projetos. Nosso arquivo httpd-vhosts.conf ficará dessa forma:
+
+<VirtualHost *:80>
+	ServerName www.projeto.restaurante.com.br
+	ServerAlias projeto.restaurante.com.br
+	DocumentRoot "C:\Users\Anthony Rafael\Desktop\restaurante"
+	<Directory "C:\Users\Anthony Rafael\Desktop\restaurante">
+		Options Indexes FollowSymLinks Includes ExecCGI
+		AllowOverride All
+		Require all granted 
+	</Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.projeto.noticias.com.br
+	ServerAlias projeto.noticias.com.br
+	DocumentRoot "C:\Users\Anthony Rafael\Desktop\noticias"
+	<Directory "C:\Users\Anthony Rafael\Desktop\noticias">
+		Options Indexes FollowSymLinks Includes ExecCGI
+		AllowOverride All
+		Require all granted 
+	</Directory>
+</VirtualHost>
+
+Perceba que o que realmente varia entre um e outro são os caminhos para os projetos e o nome do domínio que estamos criando. Só falta adicionar esses novos domínios ao arquivo hosts, que ficará assim:
+
+127.0.0.1 www.projeto.restaurante.com.br
+127.0.0.1 www.projeto.noticias.com.br
+
+Um detalhe importante: perceba que adicionamos neste arquivo o domínio que está no ServerName, por ser o identificador principal de nosso host. Depois de realizar essas alterações, basta reiniciar o Apache.
+
+Agora, se digitarmos em nosso navegador o endereço www.projeto.restaurante.com.br, será retornado o seguinte:
+
+E ao acessar www.projeto.noticias.com.br veremos o seguinte na tela:
+
+Excelente! Os dois Virtual Hosts estão sendo identificados. O melhor é que os dois servidores estão sendo executados ao mesmo tempo. Assim, podemos realizar alterações em um projeto e elas serão refletidas na hora, sem interferir na estrutura ou funcionalidade do outro. Demais, não concorda?
+
+Utilizar Virtual Hosts ajuda muito o nosso desenvolvimento. Faça testes em seu servidor Apache e use esse recurso sempre que precisar.
+
+Neste artigo mostramos como configurar Virtual Hosts no Windows. Mas, e se quiséssemos configurá-los no Linux? Iremos falar sobre isso no nosso próximo artigo, até lá!
+
+
+
+
+
