@@ -10,9 +10,9 @@ class User extends Model{
 
 	const SESSION = "User";
 
-	const SECRET = "FEDCBA9876543210";
+	const SECRET = "0123456789ABCDEF";
 
-	const SECRET_IV = "0123456789ABCDEF";
+	const SECRET_IV = "FEDCBA9876543210";
 
 	const ERROR = "UserError";
 	const ERROR_REGISTER = "UserErrorRegister";
