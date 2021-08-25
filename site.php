@@ -1,6 +1,7 @@
 <?php
 
 use \Hcode\Page;
+use \Hcode\Model\Product;
 
 //Rota INDEX
 $app->get('/', function() {
@@ -17,9 +18,14 @@ $app->get('/', function() {
 	echo("</pre><br>");
 	*/
 
+	//
+	$products = Product::listAll();
+
 	$page = new Page();
 
-	$page->setTpl("index");
+	$page->setTpl("index", [
+		'products'=>Product::checkList($products)
+	]);
 
 });
 
