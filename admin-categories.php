@@ -3,6 +3,7 @@
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
 use \Hcode\Model\Category;
+use \Hcode\Model\Product;
 
 //Rota - ADMIN - CATEGORY
 $app->get("/admin/categories", function(){
@@ -117,8 +118,11 @@ $app->post('/admin/categories/:idcategory', function($idcategory) {
 
 });
 
-//Rota CATEGORY - EXIBE CATEGORIA - GET
-$app->get('/categories/:idcategory', function($idcategory) {
+//Rota ADMIN - CATEGORY - PRODUCTS - EXIBE CATEGORIA - PRODUTOS - GET
+$app->get('/admin/categories/:idcategory/products', function($idcategory) {
+
+	//
+	User::verificaLogin();
 
 	//
 	$category = new Category();
@@ -126,15 +130,66 @@ $app->get('/categories/:idcategory', function($idcategory) {
 	$category->get((int)$idcategory);
 
 	//
-	$page = new Page();
+	$page = new PageAdmin();
 
-	$page->setTpl("category/", array(
-		"category" => $category->getValues(),
-		"products" => []
+	$page->setTpl("categories-products", array(
+		"category" => $category->getValues(), 
+		"productsRelated" => $category->getProducts(), 
+		"productsNotRelated" => $category->getProducts(false)
 	));
 
 	exit;
 
 });
+
+//Rota ADMIN - CATEGORY - PRODUCTS - ADD - PRODUTOS - GET
+$app->get('/admin/categories/:idcategory/products/:idproduct/add', function($idcategory, $idproduct) {
+
+	//
+	User::verificaLogin();
+
+	//
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	//
+	$produto = new Product();
+
+	$produto->get((int)$idproduct);
+
+	$category->addProduct($produto);
+
+	header("Location: /admin/categories/" . $idcategory . "/products");
+
+	exit;
+
+});
+
+//Rota ADMIN - CATEGORY - PRODUCTS - REMOVE - PRODUTOS - GET
+$app->get('/admin/categories/:idcategory/products/:idproduct/remove', function($idcategory, $idproduct) {
+
+	//
+	User::verificaLogin();
+
+	//
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	//
+	$produto = new Product();
+
+	$produto->get((int)$idproduct);
+
+	$category->removeProduct($produto);
+
+	header("Location: /admin/categories/" . $idcategory . "/products");
+
+	exit;
+
+});
+
+
 
 ?>

@@ -69,7 +69,9 @@ class Product extends Model{
 			":idproduct" => $this->getidproduct()
 		));
 
-		//
+		//##############################
+		//CRIAR METODO!
+		//APAGA ARQUIVO.INICIO
 		if(file_exists(
 				$_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . 
 				"res" . DIRECTORY_SEPARATOR . 
@@ -93,6 +95,8 @@ class Product extends Model{
 				unlink($arquivo);
 				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 		}
+		//APAGA ARQUIVO.FIM
+		//##############################
 
 	}
 
@@ -130,10 +134,13 @@ class Product extends Model{
 
 	public function setPhoto(){
 
-		//
+		//##############################
+		//xxx.INICIO
 		if ((string)$_FILES["file"]["name"] === ""){
 			return;
 		}
+		//xxx.FIM
+		//##############################
 
 		//
 		$extension = explode(".", (string)$_FILES["file"]["name"]);
