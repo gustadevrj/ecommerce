@@ -33,17 +33,54 @@ $app->get('/', function() {
 //Rota SITE - CATEGORY - EXIBE CATEGORIA - GET
 $app->get('/categories/:idcategory', function($idcategory) {
 
+	//PAGINACAO
+	$page = (isset($_GET["page"])) ? (int)$_GET["page"] : 1;
+
 	//
 	$category = new Category();
 
 	$category->get((int)$idcategory);
 
+	//PAGINACAO
+	$paginacao = $category->getProductsPage($page);
+
+	//PAGINACAO
+	$pages = [];
+
+	for ($i = 1; $i <= $paginacao["pages"]; $i++){
+		array_push($pages, [
+			"link"=>"/categories/" . $category->getidcategory() . "?page=" . $i, 
+			"page"=>$i
+		]);
+	}
+
 	//
 	$page = new Page();
 
-	$page->setTpl("category/", array(
+	$page->setTpl("category", array(
 		"category" => $category->getValues(),
-		"products" => Product::checkList($category->getProducts())
+		"products" => $paginacao["dados"], 
+		"pages"=>$pages
+	));
+
+	exit;
+
+});
+
+//Rota SITE - PRODUCT - DETALHE - GET
+$app->get('/products/:desurl', function($desurl) {
+
+	//
+	$produto = new Product();
+
+	$produto->getFromURL($desurl);
+
+	//
+	$page = new Page();
+
+	$page->setTpl("product-detail", array(
+		"product" => $produto->getValues(), 
+		"categories"=> $produto->getCategories()
 	));
 
 	exit;
