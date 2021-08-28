@@ -89,7 +89,7 @@ $app->get('/products/:desurl', function($desurl) {
 
 });
 
-//Rota SITE - CARRINHO - GET
+//Rota SITE - CART - CARRINHO - GET
 $app->get('/cart', function() {
 
 	//
@@ -98,7 +98,71 @@ $app->get('/cart', function() {
 	//
 	$page = new Page();
 
-	$page->setTpl("cart");
+	$page->setTpl("cart", array(
+		"products"=>$cart->getProducts()
+	));
+
+	exit;
+
+});
+
+//Rota SITE - CART - CARRINHO - ADD PRODUCT - GET
+$app->get('/cart/:idproduct/add', function($idproduct) {
+
+	$product = new Product();
+
+	$product->get((int)$idproduct);
+
+	//
+	$cart = Cart::getFromSession();
+
+	//
+	$qtd = (isset($_GET["qtd"])) ? (int)$_GET["qtd"] : 1;
+
+	for($i=0; $i < $qtd; $i++){
+		//
+		$cart->addProduct($product);
+	}
+
+	header("Location: /cart");
+
+	exit;
+
+});
+
+//Rota SITE - CART - CARRINHO - PRODUCT - REMOVE 1 POR VEZ - GET
+$app->get('/cart/:idproduct/minus', function($idproduct) {
+
+	$product = new Product();
+
+	$product->get((int)$idproduct);
+
+	//
+	$cart = Cart::getFromSession();
+
+	//
+	$cart->removeProduct($product);
+
+	header("Location: /cart");
+
+	exit;
+
+});
+
+//Rota SITE - CART - CARRINHO - PRODUCT - REMOVE TODOS - GET
+$app->get('/cart/:idproduct/remove', function($idproduct) {
+
+	$product = new Product();
+
+	$product->get((int)$idproduct);
+
+	//
+	$cart = Cart::getFromSession();
+
+	//
+	$cart->removeProduct($product, true);
+
+	header("Location: /cart");
 
 	exit;
 
