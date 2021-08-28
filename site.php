@@ -3,6 +3,8 @@
 use \Hcode\Page;
 use \Hcode\Model\Product;
 use \Hcode\Model\Category;
+use \Hcode\Model\Cart;
+
 
 //Rota INDEX
 $app->get('/', function() {
@@ -82,6 +84,21 @@ $app->get('/products/:desurl', function($desurl) {
 		"product" => $produto->getValues(), 
 		"categories"=> $produto->getCategories()
 	));
+
+	exit;
+
+});
+
+//Rota SITE - CARRINHO - GET
+$app->get('/cart', function() {
+
+	//
+	$cart = Cart::getFromSession();
+
+	//
+	$page = new Page();
+
+	$page->setTpl("cart");
 
 	exit;
 
