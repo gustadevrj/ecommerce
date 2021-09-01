@@ -98,8 +98,13 @@ $app->get('/cart', function() {
 	//
 	$page = new Page();
 
+	//
+	//var_dump($cart->getValues());
+
 	$page->setTpl("cart", array(
-		"products"=>$cart->getProducts()
+		"cart"=>$cart->getValues(), 
+		"products"=>$cart->getProducts(), 
+		"error"=>Cart::getMsgErro() 
 	));
 
 	exit;
@@ -161,6 +166,21 @@ $app->get('/cart/:idproduct/remove', function($idproduct) {
 
 	//
 	$cart->removeProduct($product, true);
+
+	header("Location: /cart");
+
+	exit;
+
+});
+
+//Rota SITE - CART - CARRINHO - CALCULA FRETE - POST
+$app->post('/cart/freight', function() {
+
+	//
+	$cart = Cart::getFromSession();
+
+	//
+	$cart->setFreight($_POST["zipcode"]);
 
 	header("Location: /cart");
 

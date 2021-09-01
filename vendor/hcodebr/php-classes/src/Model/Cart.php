@@ -10,6 +10,7 @@ use \Hcode\Model\User;
 class Cart extends Model{
 
 	const SESSION = "Cart";
+	const SESSION_ERROR = "CartError";
 
 	public static function getFromSession(){
 
@@ -127,6 +128,9 @@ class Cart extends Model{
 				":idproduct"=> $produto->getidproduct()
 			)
 		);
+
+		$this->getCalculateTotal();
+
 	}
 
 	public function removeProduct(Product $produto, $all = false){
@@ -170,6 +174,8 @@ class Cart extends Model{
 			);
 
 		}
+
+		$this->getCalculateTotal();
 
 	}
 
@@ -225,6 +231,156 @@ class Cart extends Model{
 		else{
 			return [];
 		}
+	}
+
+	public function setFreight($zipcode){
+
+		$zipcode = str_replace("-", "", $zipcode);
+
+		$totals = $this->getProductsTotals();
+
+		if ($totals["nrqtd"] > 0){
+
+			//CORREIOS - REGRAS DE NEGOCIO.INICIO
+			if($totals["vlheight"] < 2) $totals["vlheight"] = 2;
+
+			if($totals["vllength"] < 16) $totals["vllength"] = 16;
+			//CORREIOS - REGRAS DE NEGOCIO.FIM
+
+
+			$qs = http_build_query([
+				"nCdEmpresa"=>"", 
+				"sDsSenha"=>"", 
+				"nCdServico"=>"40010", //40010: SEDEX Varejo - 40045: SEDEX a Cobrar Varejo - 40215: SEDEX 10 Varejo - 40290: SEDEX Hoje Varejo - 41106: PAC Varejo
+				"sCepOrigem"=>"22640102", //CEP de Origem sem hífen
+				"sCepDestino"=>$zipcode, //CEP de Destino sem hífen
+				"nVlPeso"=>$totals["vlweight"], 
+				"nCdFormato"=>"1", //Formato da encomenda (incluindo embalagem). Valores possíveis: 1 – Formato caixa/pacote - 2 – Formato rolo/prisma - 3 - Envelope
+				"nVlComprimento"=>$totals["vllength"], 
+				"nVlAltura"=>$totals["vlheight"], 
+				"nVlLargura"=>$totals["vlwidth"], 
+				"nVlDiametro"=>"0", 
+				"sCdMaoPropria"=>"S", //Indica se a encomenda será entregue com o serviço adicional mão própria.
+				"nVlValorDeclarado"=>$totals["vlprice"], 
+				"sCdAvisoRecebimento"=>"S" //Indica se a encomenda será entregue com o serviço adicional aviso de recebimento
+			]);
+
+			$xml = simplexml_load_file("http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?" . $qs);
+
+			/*
+			//
+			//$xml = (array)$xml;
+
+			//
+			var_dump($xml);
+
+			//
+			echo("<br><pre>");
+			print_r($xml);
+			echo("</pre><br>");
+
+			//
+			echo(json_encode($xml));
+			*/
+
+			//
+			$result = $xml->Servicos->cServico;
+
+			//RETORNOU ERRO???
+			if($result->MsgErro != ""){
+
+				Cart::setMsgErro($result->MsgErro);
+
+			}
+			else{
+
+				Cart::clearMsgErro();
+
+			}
+
+			//
+			$this->setnrdays($result->PrazoEntrega);
+			$this->setvlfreight(Cart::formatValueToDecimal($result->Valor));
+			$this->setdeszipcode($zipcode);
+
+			//
+			$this->save();
+
+			return $result;
+
+		}
+		else{
+
+			//??????????
+
+		}
+
+	}
+
+	//
+	public static function formatValueToDecimal($value):float{
+
+		$value = str_replace(".", "", $value);
+		$value = str_replace(",", ".", $value);
+
+		return $value;
+	}
+
+	//
+	public static function setMsgErro($msg){
+
+		$_SESSION[Cart::SESSION_ERROR] = $msg;
+
+	}
+
+	//
+	public static function getMsgErro(){
+
+		$msg = (isset($_SESSION[Cart::SESSION_ERROR])) ? $_SESSION[Cart::SESSION_ERROR] : "";
+
+		Cart::clearMsgErro();
+
+		return $msg;
+
+	}
+
+	//
+	public static function clearMsgErro(){
+
+		$_SESSION[Cart::SESSION_ERROR] = NULL;
+
+	}
+
+	//
+	public function updateFreight(){
+
+		if ($this->getdeszipcode() != ""){
+
+			$this->setFreight($this->getdeszipcode());
+
+		}
+
+	}
+
+	//
+	public function getValues(){
+
+		$this->getCalculateTotal();
+
+		return parent::getValues();
+
+	}
+
+	//
+	public function getCalculateTotal(){
+
+		$this->updateFreight();
+
+		$totals = $this->getProductsTotals();
+
+		$this->setvlsubtotal($totals["vlprice"]);
+		$this->setvltotal($totals["vlprice"] + $this->getvlfreight());
+
 	}
 
 }
