@@ -401,13 +401,29 @@ class User extends Model{
 
 	}
 
+	public static function setErrorRegister($msg){
 
+		$_SESSION[User::ERROR_REGISTER] = $msg;
 
-	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	}
 
+	public static function getErrorRegister(){
 
-	public static function checkLoginExist($login)
-	{
+		$msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : '';
+
+		User::clearErrorRegister();
+
+		return $msg;
+
+	}
+
+	public static function clearErrorRegister(){
+
+		$_SESSION[User::ERROR_REGISTER] = NULL;
+
+	}
+
+	public static function checkLoginExist($login){
 
 		$sql = new Sql();
 
@@ -417,9 +433,11 @@ class User extends Model{
 				":deslogin"=>$login
 		));
 
-		return (count($results) >0);
+		return (count($results) > 0);
 
 	}
+
+	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 	public static function setSuccess($msg)
 	{
@@ -445,33 +463,6 @@ class User extends Model{
 		$_SESSION[User::SUCCESS] = NULL;
 
 	}
-
-	public static function setErrorRegister($msg)
-	{
-
-		$_SESSION[User::ERROR_REGISTER] = $msg;
-
-	}
-
-	public static function getErrorRegister()
-	{
-
-		$msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : '';
-
-		User::clearErrorRegister();
-
-		return $msg;
-
-	}
-
-	public static function clearErrorRegister()
-	{
-
-		$_SESSION[User::ERROR_REGISTER] = NULL;
-
-	}
-
-	
 
 	public function getOrders()
 	{
