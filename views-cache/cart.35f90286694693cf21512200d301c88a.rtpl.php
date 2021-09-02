@@ -102,14 +102,14 @@
                                         <tbody>
                                             <tr class="cart-subtotal">
                                                 <th>Subtotal</th>
-                                                <td><span class="amount">R$ <?php echo formatPrice($cart["vlsubtotal"]); ?></span></td>
+                                                <td><span class="amount"><?php if( $cart["vlsubtotal"] != NULL ){ ?> R$ <?php echo formatPrice($cart["vlsubtotal"]); ?> <?php }else{ ?> - <?php } ?></span></td>
                                             </tr>
 
                                             <tr class="shipping">
 												<?php if( $error == '' ){ ?>
 
                                                 <th>Frete</th>
-                                                <td>R$ <?php echo formatPrice($cart["vlfreight"]); ?> <?php if( $cart["nrdays"] > 0 ){ ?> <small>prazo de <?php echo htmlspecialchars( $cart["nrdays"], ENT_COMPAT, 'UTF-8', FALSE ); ?> dia(s)</small><?php } ?></td>
+                                                <td><?php if( $cart["vlfreight"] != NULL ){ ?> R$ <?php echo formatPrice($cart["vlfreight"]); ?> <?php if( $cart["nrdays"] > 0 ){ ?> <small>prazo de <?php echo htmlspecialchars( $cart["nrdays"], ENT_COMPAT, 'UTF-8', FALSE ); ?> dia(s)</small><?php } ?> <?php }else{ ?> - <?php } ?></td>
 												<?php }else{ ?>
 
 													<div class="alert alert-danger" role="alert">
@@ -122,7 +122,7 @@
 
                                             <tr class="order-total">
                                                 <th>Total</th>
-                                                <td><strong><span class="amount">R$ <?php echo formatPrice($cart["vltotal"]); ?></span></strong> </td>
+                                                <td><strong><span class="amount"><?php if( $cart["vltotal"] != NULL ){ ?> R$ <?php echo formatPrice($cart["vltotal"]); ?> <?php }else{ ?> - <?php } ?></span></strong> </td>
                                             </tr>
                                         </tbody>
                                     </table>

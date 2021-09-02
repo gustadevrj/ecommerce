@@ -72,7 +72,7 @@ class User extends Model{
 
 		$sql = new Sql();
 
-		$results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :login;", array(':login' => $login));
+		$results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b ON a.idperson = b.idperson WHERE a.deslogin = :login;", array(':login' => $login));
 
 		//$results->bindValues(":login", $login);
 
@@ -82,8 +82,24 @@ class User extends Model{
 
 		$dados = $results[0];
 
+		/*
+		echo("<br>Dados: <pre>");
+		print_r($dados);
+		echo("</pre><br>");
+		*/
+
+		/*
+		$senha1 = '$2y$12$zyppPTF9RKdVLh9AnRmf8ez0Nqj9EBP/OlQpSOoGPx1cENnRlGXpO';//HASH Senha: admin
+		$senha2 = '$2y$12$jvSVBPK/HwzN4b6FXphPvOsNsw8CLXLWEznbmnxT4GrttUE/SgI3G';//HASH Senha: suporte
+		$senha3 = '$2y$12$0o/n/W6g0ZWwOPDSBoUmNOQd2L2Gh2RKVZ6FD03dBjeld1GhAkBAe';//HASH Senha: teste
+		*/
+
 		if (password_verify($senha, $dados["despassword"]) === true){
+
 			$user = new User();
+
+			//
+			$dados["desperson"] = utf8_encode($dados["desperson"]);
 
 			//
 			$user->setData($dados);
@@ -115,9 +131,15 @@ class User extends Model{
 		||
 		(bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin
 		*/
-		if(User::checkLogin($inadmin)){
+		if(!User::checkLogin($inadmin)){
 
-			header("Location: admin/login");
+			if($inadmin){
+				header("Location: /admin/login");
+			}
+			else{
+				header("Location: /login");
+			}
+
 			exit;
 
 		}
@@ -142,9 +164,9 @@ class User extends Model{
 		$sql = new Sql();
 
 		$result = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
-			":desperson" => $this->getdesperson(), 
+			":desperson" => utf8_decode($this->getdesperson()), 
 			":deslogin" => $this->getdeslogin(), 
-			":despassword" => $this->getdespassword(), 
+			":despassword" => User::getPasswordHash($this->getdespassword()), 
 			":desemail" => $this->getdesemail(), 
 			":nrphone" => $this->getnrphone(), 
 			":inadmin" => $this->getinadmin()
@@ -164,6 +186,9 @@ class User extends Model{
 
 		$data = $result[0];
 
+		//
+		$data["desperson"] = utf8_encode($data["desperson"]);
+
 		$this->setData($data);
 
 	}
@@ -174,8 +199,9 @@ class User extends Model{
 
 		$result = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
 			":iduser" => $this->getiduser(), 
-			":desperson" => $this->getdesperson(), 
+			":desperson" => utf8_decode($this->getdesperson()), 
 			":deslogin" => $this->getdeslogin(), 
+			//":despassword" => User::getPasswordHash($this->getdespassword()), //ESSA LINHA ESTAVA DANDO ERRO PQ GERAVA UM HASH DE OUTRO HASH TODA VEZ QUE O USUARIO ERA EDITADO
 			":despassword" => $this->getdespassword(), 
 			":desemail" => $this->getdesemail(), 
 			":nrphone" => $this->getnrphone(), 
@@ -345,17 +371,13 @@ class User extends Model{
 
 	}
 
-	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-	public static function setError($msg)
-	{
+	public static function setError($msg){
 
 		$_SESSION[User::ERROR] = $msg;
 
 	}
 
-	public static function getError()
-	{
+	public static function getError(){
 
 		$msg = (isset($_SESSION[User::ERROR]) && $_SESSION[User::ERROR]) ? $_SESSION[User::ERROR] : '';
 
@@ -365,10 +387,37 @@ class User extends Model{
 
 	}
 
-	public static function clearError()
-	{
+	public static function clearError(){
 
 		$_SESSION[User::ERROR] = NULL;
+
+	}
+
+	public static function getPasswordHash($password){
+
+		return password_hash($password, PASSWORD_DEFAULT, [
+			"cost"=>12
+		]);
+
+	}
+
+
+
+	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+	public static function checkLoginExist($login)
+	{
+
+		$sql = new Sql();
+
+		$results = $sql->select("
+				SELECT * FROM tb_users WHERE deslogin = :deslogin
+			", array(
+				":deslogin"=>$login
+		));
+
+		return (count($results) >0);
 
 	}
 
@@ -422,14 +471,7 @@ class User extends Model{
 
 	}
 
-	public static function getPasswordHash($password)
-	{
-
-		return password_hash($password, PASSWORD_DEFAULT, [
-			'cost'=>12
-		]);
-
-	}
+	
 
 	public function getOrders()
 	{

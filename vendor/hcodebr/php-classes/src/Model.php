@@ -6,6 +6,7 @@ class Model{
 
 	private $values = [];
 
+	//
 	public function __call($name, $args){
 
 		$metodo = substr($name, 0, 3);
