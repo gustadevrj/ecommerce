@@ -221,7 +221,7 @@ class User extends Model{
 		));
 	}
 
-	public static function getForgot($email){
+	public static function getForgot($email, $inadmin = true){
 
 		$sql = new Sql();
 
@@ -270,7 +270,12 @@ class User extends Model{
 
 				$code = base64_encode($code);
 
-				$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=" . $code;
+				if ($inadmin === true){
+					$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=" . $code;
+				}
+				else{
+					$link = "http://www.hcodecommerce.com.br/forgot/reset?code=" . $code;
+				}
 
 				/*
 				echo("<br>***<pre>");
