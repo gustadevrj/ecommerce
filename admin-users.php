@@ -18,6 +18,8 @@ $app->get('/admin/users', function() {
 		"users" => $users
 	));
 
+	exit;
+
 });
 
 //Rota ADMIN - USERS - CREATE
@@ -29,6 +31,8 @@ $app->get('/admin/users/create', function() {
 	$page = new PageAdmin();
 
 	$page->setTpl("users-create");
+
+	exit;
 
 });
 
@@ -68,6 +72,8 @@ $app->get('/admin/users/:iduser', function($iduser) {
 	$page->setTpl("users-update", array(
 		"user" => $user->getValues()
 	));
+
+	exit;
 
 });
 

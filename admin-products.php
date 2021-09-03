@@ -19,6 +19,8 @@ $app->get("/admin/products", function(){
 		"products"=>$products
 	]);
 
+	exit;
+
 });
 
 //Rota - ADMIN - PRODUCT - CREATE
@@ -31,6 +33,8 @@ $app->get("/admin/products/create", function(){
 	$page = new PageAdmin();
 
 	$page->setTpl("products-create");
+
+	exit;
 
 });
 
@@ -93,6 +97,8 @@ $app->get('/admin/products/:idproduct', function($idproduct) {
 	$page->setTpl("products-update", array(
 		"product" => $product->getValues()
 	));
+
+	exit;
 
 });
 

@@ -20,6 +20,8 @@ $app->get("/admin/categories", function(){
 		"categories"=>$categories
 	]);
 
+	exit;
+
 });
 
 //Rota - ADMIN - CATEGORY - CREATE
@@ -32,6 +34,8 @@ $app->get("/admin/categories/create", function(){
 	$page = new PageAdmin();
 
 	$page->setTpl("categories-create");
+
+	exit;
 
 });
 
@@ -94,6 +98,8 @@ $app->get('/admin/categories/:idcategory', function($idcategory) {
 	$page->setTpl("categories-update", array(
 		"category" => $category->getValues()
 	));
+
+	exit;
 
 });
 

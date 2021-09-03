@@ -32,6 +32,8 @@ $app->get('/', function() {
 		'products'=>Product::checkList($products)
 	]);
 
+	exit;
+
 });
 
 //Rota SITE - CATEGORY - EXIBE CATEGORIA - GET
@@ -291,7 +293,7 @@ $app->post('/register', function() {
 	else{
 
 		//VERIFICA SE LOGIN JA EXISTE
-		if(User::checkLoginExist($_POST["login"]) === true){
+		if(User::checkLoginExists($_POST["login"]) === true){
 			User::setErrorRegister("Esse Login Ja Existe!");
 
 			header("Location: /login");
@@ -335,6 +337,9 @@ $app->post('/register', function() {
 	//
 	User::login($_POST["login"], $_POST["password"]);
 
+	//
+	$_SESSION["registerValues"] = NULL;
+
 	header("Location: /checkout");
 
 	exit;
@@ -348,6 +353,8 @@ $app->get('/forgot', function() {
 	$page = new Page();
 
 	$page->setTpl("forgot");
+
+	exit;
 
 });
 
@@ -371,6 +378,8 @@ $app->get('/forgot/sent', function() {
 
 	$page->setTpl("forgot-sent");
 
+	exit;
+
 });
 
 //Rota FORGOT RESET
@@ -386,6 +395,8 @@ $app->get('/forgot/reset', function() {
 		"name"=>$user["desperson"], 
 		"code"=>$_GET["code"]
 	));
+
+	exit;
 
 });
 
@@ -418,6 +429,113 @@ $app->post('/forgot/reset', function() {
 	$page = new Page();
 
 	$page->setTpl("forgot-reset-success");
+
+	exit;
+
+});
+
+//Rota PROFILE - GET
+$app->get('/profile', function() {
+
+	//
+	User::verificaLogin(false);
+
+	//
+	$user = User::getFromSession();
+
+	//
+	$page = new Page();
+
+	$page->setTpl("profile", array(
+		"user"=>$user->getValues(), 
+		"profileMsg"=>User::getSuccess(), 
+		"profileError"=>User::getError()
+	));
+
+	exit;
+
+});
+
+//Rota PROFILE - POST
+$app->post('/profile', function() {
+
+	//
+	User::verificaLogin(false);
+
+	//NOME
+	if((!isset($_POST["desperson"])) || ( $_POST["desperson"] === "")){
+		User::setError("Preencha seu Nome!");
+
+		header("Location: /profile");
+
+		exit;
+	}
+
+	//LOGIN
+	if((!isset($_POST["deslogin"])) || ( $_POST["deslogin"] === "")){
+		User::setError("Preencha seu Login!");
+
+		header("Location: /profile");
+
+		exit;
+	}
+
+	//EMAIL
+	if((!isset($_POST["desemail"])) || ( $_POST["desemail"] === "")){
+		User::setError("Preencha seu Email!");
+
+		header("Location: /profile");
+
+		exit;
+	}
+
+	//
+	$user = User::getFromSession();
+
+	//VERIFICA SE O LOGIN FOI TROCADO
+	if($_POST["deslogin"] !== $user->getdeslogin()){
+
+		//VERIFICA SE O LOGIN JA EXISTE
+		if(User::checkLoginExists($_POST["deslogin"]) === true){
+
+			User::setError("Esse Login Ja Existe!");
+
+			header("Location: /profile");
+
+			exit;
+
+		}
+
+	}
+
+	//
+	$_POST["inadmin"] = $user->getinadmin();
+
+	//
+	$_POST["despassword"] = $user->getdespassword();
+
+	//
+	$_POST["deslogin"] = $_POST["deslogin"];
+
+	//
+	$user->setData($_POST);
+
+	//
+	$user->update();
+
+	//
+	User::getSuccess("Dados Alterados com Sucesso!");
+
+	//PARA ALTERAR OS DADOS NO FORMULARIO E NO HEADER
+	$_SESSION[User::SESSION]["desperson"] = $_POST["desperson"];
+	$_SESSION[User::SESSION]["deslogin"] = $_POST["deslogin"];
+	$_SESSION[User::SESSION]["desemail"] = $_POST["desemail"];
+	$_SESSION[User::SESSION]["nrphone"] = $_POST["nrphone"];
+
+	//
+	header("Location: /profile");
+
+	exit;
 
 });
 

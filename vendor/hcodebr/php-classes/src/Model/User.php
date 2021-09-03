@@ -398,6 +398,29 @@ class User extends Model{
 
 	}
 
+	public static function setSuccess($msg){
+
+		$_SESSION[User::SUCCESS] = $msg;
+
+	}
+
+	public static function getSuccess(){
+
+		$msg = (isset($_SESSION[User::SUCCESS]) && $_SESSION[User::SUCCESS]) ? $_SESSION[User::SUCCESS] : '';
+
+		User::clearSuccess();
+
+		return $msg;
+
+	}
+
+	public static function clearSuccess(){
+
+		$_SESSION[User::SUCCESS] = NULL;
+
+	}
+
+	//
 	public static function getPasswordHash($password){
 
 		return password_hash($password, PASSWORD_DEFAULT, [
@@ -428,7 +451,7 @@ class User extends Model{
 
 	}
 
-	public static function checkLoginExist($login){
+	public static function checkLoginExists($login){
 
 		$sql = new Sql();
 
@@ -443,31 +466,6 @@ class User extends Model{
 	}
 
 	//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-	public static function setSuccess($msg)
-	{
-
-		$_SESSION[User::SUCCESS] = $msg;
-
-	}
-
-	public static function getSuccess()
-	{
-
-		$msg = (isset($_SESSION[User::SUCCESS]) && $_SESSION[User::SUCCESS]) ? $_SESSION[User::SUCCESS] : '';
-
-		User::clearSuccess();
-
-		return $msg;
-
-	}
-
-	public static function clearSuccess()
-	{
-
-		$_SESSION[User::SUCCESS] = NULL;
-
-	}
 
 	public function getOrders()
 	{

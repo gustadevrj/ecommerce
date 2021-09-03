@@ -13,6 +13,8 @@ $app->get('/admin', function() {
 
 	$page->setTpl("index");
 
+	exit;
+
 });
 
 //Rota ADMIN - LOGIN
@@ -24,6 +26,8 @@ $app->get('/admin/login', function() {
 	]);
 
 	$page->setTpl("login");
+
+	exit;
 
 });
 
@@ -61,6 +65,8 @@ $app->get('/admin/forgot', function() {
 
 	$page->setTpl("forgot");
 
+	exit;
+
 });
 
 //Rota FORGOT PASSWORD - POST
@@ -86,6 +92,8 @@ $app->get('/admin/forgot/sent', function() {
 
 	$page->setTpl("forgot-sent");
 
+	exit;
+
 });
 
 //Rota FORGOT RESET
@@ -104,6 +112,8 @@ $app->get('/admin/forgot/reset', function() {
 		"name"=>$user["desperson"], 
 		"code"=>$_GET["code"]
 	));
+
+	exit;
 
 });
 
@@ -139,6 +149,8 @@ $app->post('/admin/forgot/reset', function() {
 	]);
 
 	$page->setTpl("forgot-reset-success");
+
+	exit;
 
 });
 
