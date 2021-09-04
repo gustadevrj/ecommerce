@@ -289,12 +289,12 @@ class Cart extends Model{
 			//RETORNOU ERRO???
 			if($result->MsgErro != ""){
 
-				Cart::setMsgErro($result->MsgErro);
+				Cart::setMsgError($result->MsgErro);
 
 			}
 			else{
 
-				Cart::clearMsgErro();
+				Cart::clearMsgError();
 
 			}
 
@@ -327,25 +327,25 @@ class Cart extends Model{
 	}
 
 	//
-	public static function setMsgErro($msg){
+	public static function setMsgError($msg){
 
 		$_SESSION[Cart::SESSION_ERROR] = $msg;
 
 	}
 
 	//
-	public static function getMsgErro(){
+	public static function getMsgError(){
 
 		$msg = (isset($_SESSION[Cart::SESSION_ERROR])) ? $_SESSION[Cart::SESSION_ERROR] : "";
 
-		Cart::clearMsgErro();
+		Cart::clearMsgError();
 
 		return $msg;
 
 	}
 
 	//
-	public static function clearMsgErro(){
+	public static function clearMsgError(){
 
 		$_SESSION[Cart::SESSION_ERROR] = NULL;
 
