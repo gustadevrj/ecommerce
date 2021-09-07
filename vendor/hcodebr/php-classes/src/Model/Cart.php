@@ -17,7 +17,7 @@ class Cart extends Model{
 		$cart = new Cart();
 
 		//*** - ??? - ESSA LINHA DENTRO DO ELSE ESTAVA DANDO PROBLEMA
-		$cart->getFromSessionID();
+		//$cart->getFromSessionID();
 
 		//*** - ??? - ***
 		if (isset($_SESSION[Cart::SESSION]) && (int)$_SESSION[Cart::SESSION]["idcart"] > 0){
@@ -30,7 +30,7 @@ class Cart extends Model{
 		else{
 
 			//*** - ??? - ESSA LINHA DENTRO DO ELSE ESTAVA DANDO PROBLEMA
-			//$cart->getFromSessionID();
+			$cart->getFromSessionID();
 
 			if(!(int)$cart->getidcart() > 0){
 
