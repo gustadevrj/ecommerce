@@ -16,7 +16,7 @@ $app->get('/admin/users/:iduser/password', function($iduser) {
 	$page = new PageAdmin();
 
 	$page->setTpl("users-password", array(
-		"users" => $user->getValues(), 
+		"user" => $user->getValues(), 
 		"msgError" => User::getError(), 
 		"msgSuccess" => User::getSuccess() 
 	));
