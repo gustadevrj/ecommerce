@@ -506,12 +506,13 @@ class User extends Model{
 			INNER JOIN tb_persons b USING(idperson)
 			WHERE 
 			b.desperson LIKE :search 
-			OR b.desemail = :search 
+			OR b.desemail = :search_exato  
 			OR a.deslogin LIKE :search
 			ORDER BY b.desperson
 			LIMIT $start, $itemsPerPage;
 		", [
-			':search'=>'%'.$search.'%'
+			':search'=>'%'.$search.'%', 
+			":search_exato" => $search 
 		]);
 
 		$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
