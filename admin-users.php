@@ -10,12 +10,44 @@ $app->get('/admin/users', function() {
 	User::verificaLogin();
 
 	//
-	$users = User::listAll();
+	$search = (isset($_GET["search"])) ? $_GET["search"] : "";
+	$page = (isset($_GET["page"])) ? (int)$_GET["page"] : 1;
+
+	//
+	if($search != ""){
+
+		//
+		$paginacao = User::getPageSearch($search, $page);
+
+	}
+	else{
+
+		//
+		$paginacao = User::getPage($page);
+
+	}
+
+	//
+	$pages = array();
+
+	for($x = 0; $x < $paginacao["pages"]; $x++){
+
+		array_push($pages, [
+			"href"=>"/admin/users?" . http_build_query([
+				"page"=>$x+1, 
+				"search"=>$search 
+			]), 
+			"text"=>$x+1 
+		]);
+
+	}
 
 	$page = new PageAdmin();
 
 	$page->setTpl("users", array(
-		"users" => $users
+		"users" => $paginacao["dados"], 
+		"search"=>$search, 
+		"pages"=>$pages 
 	));
 
 	exit;
