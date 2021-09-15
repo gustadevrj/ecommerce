@@ -364,9 +364,81 @@ $app->post('/checkout', function() {
 
 	$order->save();
 
-	header("Location: /order/" . $order->getidorder());
+	//BOLETO
+	//header("Location: /order/" . $order->getidorder());
+
+	//BOLETO - PAGSEGURO - PAYPAL
+	switch ((int)$_POST['payment-method']) {
+
+		case 0:
+		header("Location: /order/" . $order->getidorder());
+		break;
+
+		case 1:
+		header("Location: /order/" . $order->getidorder() . "/pagseguro");
+		break;
+
+		case 2:
+		header("Location: /order/" . $order->getidorder() . "/paypal");
+		break;
+
+	}
 
 	exit;
+
+});
+
+//Rota SITE - ORDER - IDORDER - PAGSEGURO - GET
+$app->get("/order/:idorder/pagseguro", function($idorder){
+
+	User::verificaLogin(false);
+
+	$order = new Order();
+
+	$order->get((int)$idorder);
+
+	$cart = $order->getCart();
+
+	$page = new Page([
+		'header'=>false,
+		'footer'=>false
+	]);
+
+	$page->setTpl("payment-pagseguro", [
+		'order'=>$order->getValues(),
+		'cart'=>$cart->getValues(),
+		'products'=>$cart->getProducts(),
+		'phone'=>[
+			'areaCode'=>substr($order->getnrphone(), 0, 2),
+			'number'=>substr($order->getnrphone(), 2, strlen($order->getnrphone()))
+		]
+	]);
+
+
+});
+
+//Rota SITE - ORDER - IDORDER - PAYPAL - GET
+$app->get("/order/:idorder/paypal", function($idorder){
+
+	User::verificaLogin(false);
+
+	$order = new Order();
+
+	$order->get((int)$idorder);
+
+	$cart = $order->getCart();
+
+	$page = new Page([
+		'header'=>false,
+		'footer'=>false
+	]);
+
+	$page->setTpl("payment-paypal", [
+		'order'=>$order->getValues(),
+		'cart'=>$cart->getValues(),
+		'products'=>$cart->getProducts()
+	]);
+
 
 });
 
