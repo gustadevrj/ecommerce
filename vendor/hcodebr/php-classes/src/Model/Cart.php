@@ -96,11 +96,12 @@ class Cart extends Model{
 
 		$sql = new Sql();
 
-		$result = $sql->select("CALL sp_carts_save(:idcart, :dessessionid, :iduser, :deszipcode, :vlfreight, :nrdays)", array(
+		$result = $sql->select("CALL sp_carts_save(:idcart, :dessessionid, :iduser, :deszipcode, :idaddress, :vlfreight, :nrdays)", array(
 			":idcart"=> $this->getidcart(), 
 			":dessessionid"=> $this->getdessessionid(), 
 			":iduser"=> $this->getiduser(), 
 			":deszipcode"=> $this->getdeszipcode(), 
+			":idaddress"=> $this->getidaddress(), 
 			":vlfreight"=> $this->getvlfreight(), 
 			":nrdays"=> $this->getnrdays()
 		));

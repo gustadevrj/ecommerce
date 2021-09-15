@@ -149,6 +149,9 @@ class User extends Model{
 
 		$_SESSION[User::SESSION] = NULL;
 
+		//PARA TESTAR COM UM NOVO CART
+		//$_SESSION[Cart::SESSION]=NULL;
+
 	}
 
 	public static function listAll(){
